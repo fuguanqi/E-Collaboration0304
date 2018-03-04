@@ -27,6 +27,8 @@
         <table  tableName="participate"></table>
         
         <table  tableName="phase"></table>
+        <table  tableName="message"></table>
+        <table  tableName="event"></table>
 
         <table  tableName="project"></table>
 
