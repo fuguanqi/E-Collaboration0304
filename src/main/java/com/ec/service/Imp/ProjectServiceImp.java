@@ -1,7 +1,7 @@
 package com.ec.service.Imp;
 
 import com.ec.entity.*;
-import com.ec.mapper.InstructorMapper;
+import com.ec.mapper.*;
 import com.ec.mapper.ParticipateMapper;
 import com.ec.mapper.StudentMapper;
 import com.ec.service.ProjectService;
@@ -24,6 +24,14 @@ public class ProjectServiceImp implements ProjectService {
     private ParticipateMapper participateMapper;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private EventMapper eventMapper;
+    @Autowired
+    private MessageMapper messageMapper;
+    @Autowired
+    private ProjectfileMapper projectfileMapper;
+    @Autowired
+    private PhaseMapper phaseMapper;
     public int createProject(String studentName,String instructorName, String pTitle, String pDescription) {
 
 
@@ -162,6 +170,31 @@ public class ProjectServiceImp implements ProjectService {
             if(participateList.isEmpty()){
                 return 0;                    //该学生没有删除此项目的权限（不是组长或者根本没参加此项目）
             }
+
+            PhaseExample phaseExample=new PhaseExample();
+            PhaseExample.Criteria critirionPh = phaseExample.createCriteria();
+            critirionPh.andProjectIdEqualTo(projectId);
+            List<Phase> phaseList=phaseMapper.selectByExample(phaseExample);
+            if(!phaseList.isEmpty()){
+                return -2;        //仍有相关联的phase或task 未删除
+            }
+
+            EventExample eventExample=new EventExample();
+            EventExample.Criteria critirionEv = eventExample.createCriteria();
+            critirionEv.andProjectIdEqualTo(projectId);
+            List<Event> eventList=eventMapper.selectByExample(eventExample);
+            for(Event e:eventList){
+                eventMapper.deleteByPrimaryKey(e.getEventId());                 //删除一切相关的event记录
+            }
+
+            MessageExample messageExample=new MessageExample();
+            MessageExample.Criteria critirionMs = messageExample.createCriteria();
+            critirionMs.andProjectIdEqualTo(projectId);
+            List<Message> messageList=messageMapper.selectByExample(messageExample);
+            for(Message m:messageList){
+                messageMapper.deleteByPrimaryKey(m.getMessageId());                 //删除一切相关的message记录
+            }
+
             projectMapper.deleteByPrimaryKey(projectId);
             return 1;
 

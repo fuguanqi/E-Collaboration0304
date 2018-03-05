@@ -3,8 +3,7 @@ package com.ec.service.Imp;
 import java.util.Date;
 
 import com.ec.entity.*;
-import com.ec.mapper.ParticipateMapper;
-import com.ec.mapper.PhaseMapper;
+import com.ec.mapper.*;
 import com.ec.service.PhaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,8 @@ public class PhaseServiceImp implements PhaseService {
     private PhaseMapper phaseMapper;
     @Autowired
     private ParticipateMapper participateMapper;
+    @Autowired
+    private TaskMapper taskMapper;
 
     public int createPhase(Integer studentId, Integer projectId, String phTitle, String phDescription) {
         ParticipateExample participateExample = new ParticipateExample();
@@ -63,6 +64,16 @@ public class PhaseServiceImp implements PhaseService {
                     return 0;                    //该学生没有删除此phase的权限（不是组长或者根本没参加此项目）
                 }
                 else {
+                    int phid=ph.getPhaseId();
+                    TaskExample taskExample=new TaskExample();
+                    TaskExample.Criteria criteriat=taskExample.createCriteria();
+                    criteriat.andPhaseIdEqualTo(phid);
+                    List<Task> taskList=taskMapper.selectByExample(taskExample);
+//                    TaskServiceImp tsi=new TaskServiceImp();
+                    for(Task t : taskList){
+                        int tid=t.getTaskId();
+                        taskMapper.deleteByPrimaryKey(tid);
+                    }
                     phaseMapper.deleteByPrimaryKey(phaseId);
                     return 1;
                 }
