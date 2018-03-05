@@ -48,17 +48,24 @@ public class PhaseController {
     public void deletePhs(HttpServletRequest request, String callback, HttpServletResponse response)throws Exception {
         response.setHeader("Content-type", "text/html;charset=UTF-8");//解决response乱码
         String phaseId=request.getParameter("phaseId");
+        String studentId=request.getParameter("studentId");
         phaseId=new String(phaseId.getBytes("iso8859-1"),"utf-8");
-        int i = Integer.parseInt(phaseId);
-        int rst = phaseService.deletePhaseById(i);
+        studentId=new String(studentId.getBytes("iso8859-1"),"utf-8");
+        int phid = Integer.parseInt(phaseId);
+        int sid = Integer.parseInt(studentId);
+        int rst = phaseService.deletePhaseById(phid,sid);
 
-        if(rst!=1) {
-            response.getWriter().print(callback+"("+"{\"state\""+":"+"\"false\"}"+")");
-        }else {
-            if(callback==null) response.getWriter().print("delete success. phaseId="+i);//非异域请求
-            else {
-                response.getWriter().print(callback+"delete success. phaseId="+i);//异域请求要求callback+"("+数据+")"
-            }
+        if(rst==-1) {
+            response.getWriter().print(callback+"error:ileggal studentId or phaseId");
+        }
+        else if(rst==0){
+            response.getWriter().print(callback+"failure:This student has no authority to delete this phase.");
+        }
+        else if(rst==-2) {
+            response.getWriter().print(callback+"phaseId not exists");
+        }
+        else {
+            response.getWriter().print(callback+"delete success. phaseId="+phaseId);//异域请求要求callback+"("+数据+")"
         }
     }
 

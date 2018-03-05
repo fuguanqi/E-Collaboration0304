@@ -1,5 +1,6 @@
 package com.ec.controller;
 
+import com.ec.entity.Participate;
 import com.ec.entity.Project;
 import com.ec.service.ProjectService;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ import net.sf.json.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -61,6 +63,33 @@ public class ProjectController {
             }
         }
 
+    @RequestMapping("/addTeammates")
+    @ResponseBody
+    public void addTeammates(HttpServletRequest request, String callback, HttpServletResponse response)throws Exception {
+        response.setHeader("Content-type", "text/html;charset=UTF-8");//解决response乱码
+        String studentName1=request.getParameter("studentName1");
+
+        String studentName2=request.getParameter("studentName2");
+        String studentName3=request.getParameter("studentName3");
+
+        String projectId=request.getParameter("projectId");
+        //projectId=new String(projectId.getBytes("iso8859-1"),"utf-8");
+        List<String>studentNames=new ArrayList<String>();
+        studentNames.add(studentName1);
+        studentNames.add(studentName2);
+        studentNames.add(studentName3);
+        int i = Integer.parseInt(projectId);
+        List<Participate> participates= projectService.addTeammates(studentNames,i);
+        if(participates.isEmpty()) {
+            int o=9;
+            response.getWriter().print(callback+"("+"{\"state\""+":"+"\"false\"}"+")");
+        }else {
+            if(callback==null) response.getWriter().print(JSONObject.fromObject(participates.get(0)).toString());//非异域请求
+            else {
+                response.getWriter().print(callback+"("+JSONObject.fromObject(participates.get(0)).toString()+")");//异域请求要求callback+"("+数据+")"
+            }
+        }
+    }
     @RequestMapping("/displayProject")
     public void display(HttpServletRequest request, String callback, HttpServletResponse response)throws Exception {
         response.setHeader("Content-type", "text/html;charset=UTF-8");//解决response乱码
@@ -77,6 +106,20 @@ public class ProjectController {
                 response.getWriter().print(callback+"("+JSONObject.fromObject(projectList.get(0)).toString()+")");//异域请求要求callback+"("+数据+")"
             }
         }
+    }
+
+    @RequestMapping("/repairProject")
+    @ResponseBody
+    public  String repairProject(HttpServletRequest request, String callback, HttpServletResponse response)throws Exception{
+
+        String pTitle = request.getParameter("pTitle");
+        //pTitle = new String(pTitle.getBytes("iso8859-1"), "utf-8");
+
+        String pDescription = request.getParameter("pDescription");
+        //pDescription = new String(pDescription.getBytes("iso8859-1"), "utf-8");
+
+        int repairProject= projectService.repairProject(pTitle, pDescription);
+        return getString(callback, repairProject);
     }
 
     @RequestMapping("/deleteProject")

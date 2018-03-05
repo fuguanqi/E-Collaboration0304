@@ -86,6 +86,67 @@ public class ProjectServiceImp implements ProjectService {
         }
     }
 
+    public List<Participate> addTeammates(List<String> studentName, Integer projectId) {
+        List<Participate> participates = new ArrayList<Participate>();
+        List<Project> projectList = new ArrayList<Project>();
+        ProjectExample projectExample=new ProjectExample();
+        ProjectExample.Criteria criteria4=projectExample.createCriteria();
+        criteria4.andProjectIdEqualTo(projectId);
+        projectList=projectMapper.selectByExample(projectExample);
+        if(projectList.isEmpty()){
+            return participates;
+        }
+
+        int insertParticipate=0;
+        StudentExample studentExample=new StudentExample();
+        StudentExample.Criteria criteria2=studentExample.createCriteria();
+        criteria2.andNameIn(studentName);
+        List<Student> Starget=studentMapper.selectByExample(studentExample);
+        int i=0;
+        while (!Starget.isEmpty()){
+            Participate participate=new Participate();
+            participate.setProjectId(projectList.get(0).getProjectId());
+            participate.setStudentId(Starget.get(0).getStudentId());
+            participate.setRole(0);//1代表组长，0代表组员
+            participate.setContribution(0);
+            participate.setParticipateTime(new Date());
+            insertParticipate=participateMapper.insertSelective(participate);
+            Starget.remove(0);
+            i++;
+        }
+
+
+
+        ParticipateExample participateExample= new ParticipateExample();
+        ParticipateExample.Criteria criteria=participateExample.createCriteria();
+        criteria.andProjectIdEqualTo(projectId);
+        participates=participateMapper.selectByExample(participateExample);
+
+        return participates;
+
+    }
+
+    public int repairProject(String pTitle, String pDescription) {
+        if(pTitle.trim()==null||pTitle.trim().equals("")){//项目名为空
+            return 0;
+        }else {
+            ProjectExample projectExample = new ProjectExample();
+            ProjectExample.Criteria criteria = projectExample.createCriteria();//构造自定义查询条件
+            criteria.andPTitleEqualTo(pTitle);
+            List<Project> projects = projectMapper.selectByExample(projectExample);
+            if (projects.isEmpty()) {
+                return 0;
+            } else {
+                Project project = new Project();
+                project=projects.get(0);
+                project.setpTitle(pTitle);
+                project.setpDescription(pDescription);
+
+                int repairProject = projectMapper.updateByExampleSelective(project,projectExample);
+                return repairProject;
+            }
+        }
+    }
     public int deleteProjectById (int projectId, int studentId){   //根据ProjectId删除project的实现
         if(projectId<=0||studentId<=0){//若ProjectId或studentId为非正数
             return -1;

@@ -95,4 +95,27 @@ public class UserServiceImp implements UserService {
             }
         }
     }
+    public int repairStudent(String username,String password, String email) {
+        if (username.trim() == null || username.trim().equals("")) {//用户名为空
+            return 0;
+        }
+        else {
+            StudentExample studentExample = new StudentExample();
+            StudentExample.Criteria criteria = studentExample.createCriteria();//构造自定义查询条件
+            criteria.andNameEqualTo(username);
+            List<Student> userList = studentMapper.selectByExample(studentExample);
+            if (userList.isEmpty()) {
+                return 0;
+            } else {
+
+                Student student = new Student();
+                student=userList.get(0);
+                student.setEmailAdd(email);
+                student.setPassword(password);
+                int repairUser = studentMapper.updateByExampleSelective(student,studentExample);
+
+                return repairUser;
+            }
+        }
+    }
 }

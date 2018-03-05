@@ -15,5 +15,5 @@ public interface UserService {
     int registerStudent(String username, String password, String email);
     //老师注册
     int registerInstructor(String username, String password, String email);
-
+    int repairStudent(String username,String password,String email);
 }

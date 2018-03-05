@@ -76,14 +76,14 @@ public class TaskController {
             response.getWriter().print(callback+"error:ileggal studentId or taskId");
         }
         else if(rst==0){
-            response.getWriter().print(callback+"failure:This student has no authority to delete this project.");
+            response.getWriter().print(callback+"failure:This student has no authority to delete this task.");
         }
         else if(rst==-2) {
             response.getWriter().print(callback+"taskId not exists");
         }
-            else {
-                response.getWriter().print(callback+"delete success. taskId="+tid);//异域请求要求callback+"("+数据+")"
-            }
+        else {
+            response.getWriter().print(callback+"delete success. taskId="+tid);//异域请求要求callback+"("+数据+")"
+        }
 
     }
 

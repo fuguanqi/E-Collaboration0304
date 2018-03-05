@@ -92,7 +92,18 @@ public class UserController {
             return getString(callback, registerUser);
         }
     }
-
+    @RequestMapping("/repair")
+    public String  repairStudent(HttpServletRequest request, String callback,HttpServletResponse response)throws Exception{
+        response.setHeader("Content-type", "text/html;charset=UTF-8");//解决response乱码
+        String username = request.getParameter("username");
+        //username = new String(username.getBytes("iso8859-1"),"utf-8");//解决get请求中文乱码
+        String password = request.getParameter("password");
+        // password = new String(password.getBytes("iso8859-1"),"utf-8");
+        String email = request.getParameter("email");
+        // email = new String(email.getBytes("iso8859-1"),"utf-8");
+        int repairStudent = userService.repairStudent(username,password,email);
+        return getString(callback, repairStudent);
+    }
     @NotNull
     private String getString(String callback, int registerUser) {
         if(registerUser!=0) {
