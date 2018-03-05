@@ -139,7 +139,10 @@ public class ProjectController {
         else if(rst==0){
             response.getWriter().print(callback+"failure:This student has no authority to delete this project.");
         }
-        else {
+        else if(rst==-2){
+            response.getWriter().print(callback+"failure:This project still has phases or tasks.");
+        }
+        else   {
             if(callback==null) response.getWriter().print("delete success. projectId="+pid);//非异域请求
             else {
                 response.getWriter().print(callback+"delete success. projectId="+pid);//异域请求要求callback+"("+数据+")"

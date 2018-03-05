@@ -182,18 +182,33 @@ public class ProjectServiceImp implements ProjectService {
             EventExample eventExample=new EventExample();
             EventExample.Criteria critirionEv = eventExample.createCriteria();
             critirionEv.andProjectIdEqualTo(projectId);
-            List<Event> eventList=eventMapper.selectByExample(eventExample);
-            for(Event e:eventList){
-                eventMapper.deleteByPrimaryKey(e.getEventId());                 //删除一切相关的event记录
-            }
+            eventMapper.deleteByExample(eventExample);
+//            for(Event e:eventList){
+//                eventMapper.deleteByPrimaryKey(e.getEventId());                 //删除一切相关的event记录
+//            }
 
             MessageExample messageExample=new MessageExample();
             MessageExample.Criteria critirionMs = messageExample.createCriteria();
             critirionMs.andProjectIdEqualTo(projectId);
-            List<Message> messageList=messageMapper.selectByExample(messageExample);
-            for(Message m:messageList){
-                messageMapper.deleteByPrimaryKey(m.getMessageId());                 //删除一切相关的message记录
-            }
+            messageMapper.deleteByExample(messageExample);
+//            List<Message> messageList=messageMapper.selectByExample(messageExample);
+//            for(Message m:messageList){
+//                messageMapper.deleteByPrimaryKey(m.getMessageId());                 //删除一切相关的message记录
+//            }
+
+            participateExample=new ParticipateExample();
+            ParticipateExample.Criteria critirionPt = participateExample.createCriteria();
+            critirionPt.andProjectIdEqualTo(projectId);
+//            List<Participate> participateList1=participateMapper.selectByExample(participateExample);
+            participateMapper.deleteByExample(participateExample);                 //删除一切相关的participate记录
+
+
+            ProjectfileExample projectfileExample=new ProjectfileExample();
+            ProjectfileExample.Criteria critirionPf = projectfileExample.createCriteria();
+            critirionPf.andProjectIdEqualTo(projectId);
+//            List<Participate> participateList1=participateMapper.selectByExample(participateExample);
+            projectfileMapper.deleteByExample(projectfileExample);                 //删除一切相关的projectFile记录
+
 
             projectMapper.deleteByPrimaryKey(projectId);
             return 1;
